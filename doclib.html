@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hybrid RAG | Documents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="doclib.css" />
+  <script src="doclib.js" defer></script>
+</head>
+<body>
+  <main class="main-container">
+    <div class="header-section">
+      <div>
+        <a href="landingpage.html" class="back-link">Back to Home</a>
+        <h1 class="page-title">Document Library</h1>
+        <p class="page-subtitle">Upload, manage, and index your documents</p>
+      </div>
+      <div class="header-actions">
+        <input type="file" id="document-upload" class="hidden" accept=".pdf,.docx,.txt" multiple />
+        
+        <button id="upload-btn" class="btn-primary">트 Upload Document</button>
+       
+        <a href="chat.html" class="btn-outline">Ask Assistant</a>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="toolbar">
+        <div class="toolbar-inner">
+          <input type="search" placeholder="Search documents by name, type, or status..." class="search-input" />
+          <button onclick="toast('Filter applied.')" class="btn-secondary">🔍 Filter</button>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-name">Q3_Financial_Report.pdf</td>
+              <td class="cell-type">PDF</td>
+              <td><span class="badge-success">✔ Indexed</span></td>
+              <td class="actions-cell">
+                <button onclick="toast('Preview opened.')" class="action-link">View</button>
+                <button onclick="toast('Reprocess started.')" class="action-link">Reprocess</button>
+                <button onclick="toast('Document removed.')" class="action-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-name">Architecture_Guide.docx</td>
+              <td class="cell-type">DOCX</td>
+              <td><span class="badge-warning">⚣ Processing</span></td>
+              <td class="actions-cell">
+                <button onclick="toast('Preview opened.')" class="action-link">View</button>
+                <button onclick="toast('Reprocess started.')" class="action-link">Reprocess</button>
+                <button onclick="toast('Document removed.')" class="action-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-name">Security_Policies.txt</td>
+              <td class="cell-type">TXT</td>
+              <td><span class="badge-success">✔ Indexed</span></td>
+              <td class="actions-cell">
+                <button onclick="toast('Preview opened.')" class="action-link">View</button>
+                <button onclick="toast('Reprocess started.')" class="action-link">Reprocess</button>
+                <button onclick="toast('Document removed.')" class="action-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p id="note" class="toast hidden"></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hybrid RAG | Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="chat.css" />
+  <script src="chat.js" defer></script>
+</head>
+<body class="app-shell">
+  <main class="chatgpt-shell">
+    
+    <!-- Left Sidebar: Actions & History -->
+    <aside class="sidebar sidebar-left chat-scrollbar glass-panel">
+      <div class="nav-back-container">
+        <a href="landingpage.html" class="nav-back-link">Back to Home</a>
+      </div>
+
+      <button type="button" class="btn-primary btn-new-chat" onclick="clearConversation()">+ New Chat</button>
+
+      <div class="panel-section">
+        <p class="section-label">Quick Actions</p>
+        <div class="quick-actions-grid">
+          <button type="button" data-quick-prompt="Summarize the key findings from my uploaded documents." class="action-btn">Summarize findings</button>
+          <button type="button" data-quick-prompt="What are the highest-risk assumptions in this architecture?" class="action-btn">Find risk assumptions</button>
+          <button type="button" data-quick-prompt="Suggest optimizations for lower latency in this RAG workflow." class="action-btn">Optimize latency</button>
+        </div>
+      </div>
+
+      <section class="panel-section">
+        <div class="section-header">
+          <h2 class="section-label">Chat History</h2>
+          <span class="badge badge-subtle">Latest 12</span>
+        </div>
+        <input id="history-search" type="search" placeholder="Search chat history..." class="search-input" />
+        <div id="query-history" class="history-list chat-scrollbar"></div>
+      </section>
+
+      <div class="stats-panel">
+        <div class="stat-row"><span>Indexed files</span><strong>124</strong></div>
+        <div class="stat-row"><span>Avg recall</span><strong>92.4%</strong></div>
+        <div class="stat-row"><span>Last refresh</span><strong>2m ago</strong></div>
+      </div>
+
+      <button id="clear-chat" type="button" class="btn-danger btn-clear">Clear Conversation</button>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <section class="chat-main">
+      <header class="chat-header">
+        <div class="header-content">
+          <div>
+            <h1 class="chat-title">Hybrid RAG Assistant</h1>
+            <p class="chat-subtitle">Grounded answers with document evidence.</p>
+          </div>
+        </div>
+      </header>
+
+      <div id="log" class="chat-log chat-scrollbar"></div>
+
+      <footer class="chat-footer">
+        <form id="chat-form" class="chat-form">
+          <div class="prompt-container glass-panel">
+            <label for="prompt" class="prompt-label">Message Hybrid RAG</label>
+            <textarea id="prompt" rows="2" class="prompt-input" placeholder="Ask about architecture, risks, performance, or evidence..."></textarea>
+            
+            <div class="prompt-meta">
+              <span>Enter to send, Shift+Enter for newline</span>
+              <span id="prompt-count">0/800</span>
+            </div>
+            
+            <div class="prompt-actions">
+              <div id="current-model" class="model-indicator">Model: grounded-chat-v2</div>
+              <button id="send-btn" type="submit" class="btn-primary">Send</button>
+            </div>
+            
+            <p id="config-warning" class="warning-alert hidden"></p>
+          </div>
+        </form>
+      </footer>
+    </section>
+
+    <!-- Right Sidebar: Configuration & Documents -->
+    <aside class="sidebar sidebar-right utility-panel chat-scrollbar glass-panel">
+      
+      <section class="panel-section">
+        <h2 class="section-title">Configuration</h2>
+        <p class="section-desc">1) Select mode 2) Check availability 3) Choose available models 4) Confirm.</p>
+
+        <label for="mode-select" class="config-label">Mode</label>
+        <select id="mode-select" class="config-input select-margin">
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+
+        <div class="status-container">
+          <p id="mode-availability-state" class="status-badge status-available">Hybrid mode is available</p>
+          <p id="mode-availability-detail" class="status-detail">Online: Available | Offline: Available</p>
+        </div>
+
+        <div id="online-model-wrap" class="config-wrap">
+          <label for="online-model-select" class="config-label">Online model</label>
+          <select id="online-model-select" class="config-input">
+            <option value="gpt-4.1-online">GPT-4.1 Online</option>
+            <option value="gpt-4o-online">GPT-4o Online</option>
+            <option value="gpt-4.1-mini-online">GPT-4.1 Mini Online</option>
+          </select>
+        </div>
+
+        <div id="offline-model-wrap" class="config-wrap">
+          <label for="offline-model-select" class="config-label">Offline model</label>
+          <select id="offline-model-select" class="config-input">
+            <option value="llama-3.1-8b-local">Llama 3.1 8B Local</option>
+            <option value="mistral-7b-local">Mistral 7B Local</option>
+            <option value="phi-3.5-local">Phi 3.5 Local</option>
+          </select>
+        </div>
+
+        <button id="config-confirm-btn" type="button" class="btn-primary w-full">Confirm Configuration</button>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-header">
+          <h2 class="section-title">Document Upload</h2>
+          <button id="upload-doc" type="button" class="btn-upload">Upload</button>
+        </div>
+        <input id="doc-upload-input" type="file" multiple class="hidden" />
+        <input id="doc-search" type="search" placeholder="Search documents..." class="search-input" />
+        
+        <div class="table-container chat-scrollbar">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="docs-body"></tbody>
+          </table>
+        </div>
+      </section>
+      
+    </aside>
+  </main>
+</body>
+</html>
